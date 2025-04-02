@@ -1,5 +1,12 @@
 const express = require('express')
-const app = express()
+const cors = require('cors')
 
-const port = 5050
-app.listen(port, ()=>{console.log(`Serveur lancé sur le port : ${port}`)})
+const app = express()
+app.use(express.json())
+app.use(cors())
+
+const enseignantRoutes = require('./routes/enseignantRoutes')
+
+app.use('/enseignant', enseignantRoutes)
+
+app.listen(9000, ()=>{console.log(`Serveur lancé sur le port : 9000`)})

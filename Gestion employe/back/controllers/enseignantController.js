@@ -1,0 +1,16 @@
+const {Enseignant} = require('../models/index')
+
+exports.createEnseignant = async (req, res) =>{
+    // A optimiser
+    const {numens, nom} = req.body
+    try{
+        const enseignant = await Enseignant.create({numens, nom})
+        res.json({"message": "Créé avec succes", "enseignant": enseignant})
+    }
+    catch(e){
+        console.log(e)
+        res.json("Erreur lors de la création d'enseignant")
+    }
+    
+}
+
