@@ -3,5 +3,6 @@ const router = express.Router()
 const enseignantController = require('../controllers/enseignantController')
 
 router.post('/new', enseignantController.createEnseignant)
+router.get('/all', enseignantController.gellAllEnseignant)
 
 module.exports = router

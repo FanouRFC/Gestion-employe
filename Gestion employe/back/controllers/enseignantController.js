@@ -14,3 +14,14 @@ exports.createEnseignant = async (req, res) =>{
     
 }
 
+exports.gellAllEnseignant = async (req,res)=>{
+    try{
+        const all_enseignant = await Enseignant.findAll()
+        res.json({"Enseignants": all_enseignant})
+    }
+    catch(e){
+        console.log(e)
+        res.json("Erreur de récuperation")
+    }
+}
+
