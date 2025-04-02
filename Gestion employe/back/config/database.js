@@ -2,7 +2,7 @@ const {Sequelize} = require('sequelize')
 
 // SOLOY MOT DE PASSE ANLE POSTGRESQL ANLISANY NY PARAMETRE FAHATELO @ Constructeur Sequelize io
 
-const sequelize = new Sequelize('etablissement', 'postgres', 'fafa', {
+const sequelize = new Sequelize('etablissement', 'postgres', '_MOT_DE_PASSE', {
     host: 'localhost',
     dialect: 'postgres'
 })
