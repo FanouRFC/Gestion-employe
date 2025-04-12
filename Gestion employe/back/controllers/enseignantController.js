@@ -1,4 +1,4 @@
-const {Enseignant} = require('../models/index')
+const {Enseignant, sequelize} = require('../models/index')
 
 exports.createEnseignant = async (req, res) =>{
     // A optimiser
@@ -16,7 +16,7 @@ exports.createEnseignant = async (req, res) =>{
 
 exports.gellAllEnseignant = async (req,res)=>{
     try{
-        const all_enseignant = await Enseignant.findAll()
+        const all_enseignant = await Enseignant.findAll({order: [['numens', 'ASC']]})
         res.json({"Enseignants": all_enseignant})
     }
     catch(e){
@@ -75,6 +75,15 @@ exports.updateOneEnseignant = async (req, res)=>{
     }
 }
 
-ex
+exports.getStatistics = async (req, res)=>{
+
+    const [stats] = await sequelize.query("SELECT MAX(taux_horaire * nbrheures) AS salaireMax,MIN(taux_horaire * nbrheures) AS salaireMin, SUM(taux_horaire * nbrheures) AS SalaireTotal from enseignant")
+    const max = stats[0].salairemax
+    const min = stats[0].salairemin
+    const total = stats[0].salairetotal
+
+    res.json({max, min, total})
+
+}
 
 
