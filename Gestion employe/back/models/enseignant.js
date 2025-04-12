@@ -19,6 +19,7 @@ const Enseignant = sequelize.define('Enseignant', {
         type: DataTypes.FLOAT
     }
 },{
+    tableName: "enseignant",
     timestamps: true
 })
 
