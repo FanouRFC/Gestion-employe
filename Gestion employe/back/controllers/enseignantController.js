@@ -62,7 +62,7 @@ exports.updateOneEnseignant = async (req, res)=>{
                 enseignant.save()
             }
             if(taux_horaire != null){
-                enseignant.taux_horaire = parseInt(taux_horaire)
+                enseignant.taux_horaire = parseFloat(taux_horaire)
                 enseignant.save()
             }
 
@@ -74,5 +74,7 @@ exports.updateOneEnseignant = async (req, res)=>{
         res.json("Erreur de mise a jour")
     }
 }
+
+ex
 
 

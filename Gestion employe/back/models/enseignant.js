@@ -16,7 +16,7 @@ const Enseignant = sequelize.define('Enseignant', {
         type: DataTypes.INTEGER
     },
     taux_horaire:{
-        type: DataTypes.INTEGER
+        type: DataTypes.FLOAT
     }
 },{
     timestamps: true
