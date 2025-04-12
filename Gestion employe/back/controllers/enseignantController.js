@@ -40,3 +40,39 @@ exports.deleteOneEnseignant = async(req, res)=>{
     }
 }
 
+exports.updateOneEnseignant = async (req, res)=>{
+    try{
+        const numens = req.params.numens
+        if(!numens){
+            return res.json({"message": "Selectionner enseignant à modifier"})
+        }
+        const {nom, nbrheures, taux_horaire} = req.body
+        const enseignant = await Enseignant.findByPk(numens)
+
+        if(!enseignant){
+            return res.json({"message": "L'enseignant n'existe pas"})
+        }
+        else{
+            if(nom!=null){
+                enseignant.nom = nom
+                enseignant.save()
+            }
+            if(nbrheures !=null){
+                enseignant.nbrheures = parseInt(nbrheures)
+                enseignant.save()
+            }
+            if(taux_horaire != null){
+                enseignant.taux_horaire = parseInt(taux_horaire)
+                enseignant.save()
+            }
+
+            return res.json({"message": "L'enseignant a été mis à jour"})
+        }
+    }
+    catch(e){
+        console.log(e)
+        res.json("Erreur de mise a jour")
+    }
+}
+
+
