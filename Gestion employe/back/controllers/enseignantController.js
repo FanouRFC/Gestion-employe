@@ -1,10 +1,18 @@
 const {Enseignant, sequelize} = require('../models/index')
 
 exports.createEnseignant = async (req, res) =>{
-    // A optimiser
-    const {numens, nom, nbrheures, taux_horaire} = req.body
+ 
+    //Recuperer dernier ID et faire +1 la partie qui est un chiffre
+
+    const lastEnseignant = await Enseignant.findOne({ order: [['numens', 'DESC']]})
+    const n = (lastEnseignant.numens).split("")
+    n.splice(0, 1)
+    var newIDNumber = "E" + (parseInt(n.join("")) + 1)
+
+    const {nom, nbrheures, taux_horaire} = req.body
+    
     try{
-        const enseignant = await Enseignant.create({numens, nom:nom, nbrheures, taux_horaire})
+        const enseignant = await Enseignant.create({numens:newIDNumber, nom:nom, nbrheures, taux_horaire})
         res.json({"message": "Créé avec succes", "enseignant": enseignant})
     }
     catch(e){
