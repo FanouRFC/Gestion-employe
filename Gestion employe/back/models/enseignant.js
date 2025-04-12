@@ -12,14 +12,29 @@ const Enseignant = sequelize.define('Enseignant', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    nbrheures: {
+    nbheures: {
         type: DataTypes.INTEGER
     },
-    taux_horaire:{
-        type: DataTypes.INTEGER
-    }
+    tauxhoraire:{
+        type: DataTypes.FLOAT
+    },
+    salaire:{
+        type: DataTypes.FLOAT
+    },
 },{
-    timestamps: true
+    hooks: {
+        beforeCreate: (enseignant) => {
+          enseignant.salaire = enseignant.nbheures * enseignant.tauxhoraire;
+        },
+        beforeUpdate: (enseignant) => {
+          enseignant.salaire = enseignant.nbheures * enseignant.tauxhoraire;
+        }
+      },
+    tableName: 'ENSEIGNANT',
+    timestamps: false,
+    createdAt: false,
+    updatedAt: false,
+    freezeTableName: true
 })
 
 module.exports = Enseignant
