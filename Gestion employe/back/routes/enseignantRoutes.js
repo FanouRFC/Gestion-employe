@@ -3,6 +3,7 @@ const router = express.Router()
 const enseignantController = require('../controllers/enseignantController')
 
 router.post('/new', enseignantController.createEnseignant)
+router.get('/nextid', enseignantController.getNextId);
 router.get('/all', enseignantController.getAllEnseignant)
 router.get('/stats', enseignantController.getStatistics)
 router.delete('/delete/:numens', enseignantController.deleteOneEnseignant)

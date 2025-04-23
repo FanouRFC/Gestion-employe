@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
-import { createEnseignant } from "../services/enseignantApi";
+import {
+  getNextId,
+  createEnseignant,
+  updateEnseignant,
+} from "../services/enseignantApi";
 
 function AjoutEnseignant() {
   const [formData, setFormData] = useState({
@@ -9,6 +14,35 @@ function AjoutEnseignant() {
     nbheures: "",
     tauxhoraire: "",
   });
+
+  // edit
+  const location = useLocation();
+  const enseignantToEdit = location.state?.enseignant;
+  const fetchNextId = async () => {
+    try {
+      const response = await getNextId();
+      setFormData((prev) => ({
+        ...prev,
+        numens: response.data.nextId,
+      }));
+    } catch (error) {
+      console.error("Erreur lors de la récupération du prochain ID :", error);
+    }
+  };
+
+  // nuero manaraka + donne a modifie
+  useEffect(() => {
+    if (enseignantToEdit) {
+      setFormData({
+        numens: enseignantToEdit.numens,
+        nom: enseignantToEdit.nom,
+        nbheures: enseignantToEdit.nbheures,
+        tauxhoraire: enseignantToEdit.tauxhoraire,
+      });
+    } else {
+      fetchNextId();
+    }
+  }, [enseignantToEdit]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,16 +54,71 @@ function AjoutEnseignant() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await createEnseignant(formData);
-      alert("Enseignant ajouté avec succès !");
+      if (enseignantToEdit) {
+        await updateEnseignant(formData.numens, formData);
+        setNotification({
+          type: "success",
+          message: "Modification réussie",
+          description: "Enseignant modifié avec succès !",
+        });
+      } else {
+        await createEnseignant(formData);
+        setNotification({
+          type: "success",
+          message: "Ajout réussie",
+          description: "Enseignant ajouté avec succès !",
+        });
+      }
       setFormData({ numens: "", nom: "", nbheures: "", tauxhoraire: "" });
+      fetchNextId();
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de l'ajout de l'enseignant.");
+      setNotification({
+        type: "success",
+        message: "Erreur d'ajout",
+        description: "Erreur lors de l'enregistrement de l'enseignant.",
+      });
     }
   };
+
+  // notification
+  const [notification, setNotification] = useState(null);
+  const renderNotification = () => {
+    if (!notification) return null;
+
+    return (
+      <div
+        className={`fixed bottom-5 right-5 p-4 rounded-lg shadow-lg ${
+          notification.type === "success" ? "bg-indigo-400" : "bg-red-400"
+        }`}
+      >
+        <div className="flex justify-between items-center">
+          <span className="text-white">{notification.message}</span>
+          <button
+            onClick={() => setNotification(null)}
+            className="text-white ml-2 hover:text-gray-300"
+          >
+            &times;
+          </button>
+        </div>
+        <p className="text-white">{notification.description}</p>
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(
+        () => {
+          setNotification(null);
+        },
+        notification.duration ? notification.duration * 1000 : 3000
+      );
+
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   return (
     <div className="flex min-h-screen bg-gray-900">
@@ -41,7 +130,7 @@ function AjoutEnseignant() {
               className="font-bold text-blue-600 uppercase hover:text-blue-700 text-2xl"
               href="#"
             >
-              Nouveau Enseignant
+              {enseignantToEdit ? "Modifier Information" : "Nouveau Enseignant"}
             </a>
           </div>
 
@@ -60,9 +149,8 @@ function AjoutEnseignant() {
                     name="numens"
                     id="numens"
                     value={formData.numens}
-                    onChange={handleChange}
                     className="w-full rounded-md border pl-2 py-1.5 text-gray-900 bg-gray-100 shadow-sm sm:text-sm"
-                    required
+                    readOnly
                   />
                 </div>
 
@@ -107,7 +195,7 @@ function AjoutEnseignant() {
                     htmlFor="tauxhoraire"
                     className="text-sm font-medium leading-6 text-gray-900"
                   >
-                    Taux horaire
+                    Taux horaire ( MGA )
                   </label>
                   <input
                     type="text"
@@ -142,11 +230,12 @@ function AjoutEnseignant() {
               type="submit"
               className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600"
             >
-              Confirmer
+              {enseignantToEdit ? "Modifier" : "Ajouter"}
             </button>
           </div>
         </form>
-      </div>
+      </div>{" "}
+      {renderNotification()}
     </div>
   );
 }

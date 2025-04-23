@@ -6,6 +6,10 @@ export const createEnseignant = async (data) => {
   return axios.post(`${API_URL}/new`, data);
 };
 
+export const getNextId = async () => {
+  return axios.get(`${API_URL}/nextid`);
+};
+
 export const getAllEnseignants = async () => {
   return axios.get(`${API_URL}/all`);
 };
@@ -16,4 +20,8 @@ export const updateEnseignant = async (id, data) => {
 
 export const deleteEnseignant = async (id) => {
   return axios.delete(`${API_URL}/delete/${id}`);
+};
+
+export const getStatistics = async () => {
+  return axios.get(`${API_URL}/stats`);
 };

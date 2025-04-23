@@ -37,4 +37,7 @@ const Enseignant = sequelize.define('Enseignant', {
     freezeTableName: true
 })
 
+// creation table :
+// sequelize.sync()
+
 module.exports = Enseignant

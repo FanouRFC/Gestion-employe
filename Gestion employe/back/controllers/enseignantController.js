@@ -1,18 +1,10 @@
 const {Enseignant, sequelize} = require('../models/index')
 
 exports.createEnseignant = async (req, res) =>{
- 
-    //Recuperer dernier ID et faire +1 la partie qui est un chiffre
 
-    const lastEnseignant = await Enseignant.findOne({ order: [['numens', 'DESC']]})
-    const n = (lastEnseignant.numens).split("")
-    n.splice(0, 1)
-    var newIDNumber = "E" + (parseInt(n.join("")) + 1)
-
-    const {nom, nbheures, taux_horaire} = req.body
     
     try{
-        const enseignant = await Enseignant.create({numens:newIDNumber, nom:nom, nbheures, taux_horaire})
+        const enseignant = await Enseignant.create(req.body)
         res.json({"message": "Créé avec succes", "enseignant": enseignant})
     }
     catch(e){
@@ -54,7 +46,7 @@ exports.updateOneEnseignant = async (req, res)=>{
         if(!numens){
             return res.json({"message": "Selectionner enseignant à modifier"})
         }
-        const {nom, nbheures, taux_horaire} = req.body
+        const {nom, nbheures, tauxhoraire} = req.body
         const enseignant = await Enseignant.findByPk(numens)
 
         if(!enseignant){
@@ -69,8 +61,8 @@ exports.updateOneEnseignant = async (req, res)=>{
                 enseignant.nbheures = parseInt(nbheures)
                 enseignant.save()
             }
-            if(taux_horaire != null){
-                enseignant.taux_horaire = parseFloat(taux_horaire)
+            if(tauxhoraire != null){
+                enseignant.tauxhoraire = parseFloat(tauxhoraire)
                 enseignant.save()
             }
 
@@ -85,7 +77,7 @@ exports.updateOneEnseignant = async (req, res)=>{
 
 exports.getStatistics = async (req, res)=>{
 
-    const [stats] = await sequelize.query("SELECT MAX(taux_horaire * nbheures) AS salaireMax,MIN(taux_horaire * nbheures) AS salaireMin, SUM(taux_horaire * nbheures) AS SalaireTotal from enseignant")
+    const [stats] = await sequelize.query(`SELECT MAX(tauxhoraire * nbheures) AS salaireMax,MIN(tauxhoraire * nbheures) AS salaireMin, SUM(tauxhoraire * nbheures) AS SalaireTotal from "ENSEIGNANT"`)
     const max = stats[0].salairemax
     const min = stats[0].salairemin
     const total = stats[0].salairetotal
@@ -93,3 +85,28 @@ exports.getStatistics = async (req, res)=>{
     res.json({max, min, total})
 
 }
+
+    //Recuperer dernier ID et faire +1 la partie qui est un chiffre
+    exports.getNextId = async (req, res) => {
+        try {
+            let nextId = "E-0001";
+
+            const lastEnseignant = await Enseignant.findOne({ order: [['numens', 'DESC']] });
+            
+            if (lastEnseignant) {
+              const lastNum = lastEnseignant.numens.split("-")[1];
+              const nextNum = parseInt(lastNum) + 1;
+              const padded = nextNum.toString().padStart(4, "0");
+              nextId = `E-${padded}`;
+            }
+            
+      
+          res.json({ nextId });
+      
+        } catch (e) {
+          console.error(e);
+          res.status(500).json({ error: "Erreur lors de la génération du prochain ID" });
+        }
+      };
+      
+  
