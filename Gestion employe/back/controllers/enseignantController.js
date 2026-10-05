@@ -1,4 +1,5 @@
 const {Enseignant, sequelize} = require('../models/index')
+const { getStatisticsService } = require('../services/enseignant.service')
 
 exports.createEnseignant = async (req, res) =>{
 
@@ -77,13 +78,9 @@ exports.updateOneEnseignant = async (req, res)=>{
 
 exports.getStatistics = async (req, res)=>{
 
-    const [stats] = await sequelize.query(`SELECT MAX(tauxhoraire * nbheures) AS salaireMax,MIN(tauxhoraire * nbheures) AS salaireMin, SUM(tauxhoraire * nbheures) AS SalaireTotal from "ENSEIGNANT"`)
-    const max = stats[0].salairemax
-    const min = stats[0].salairemin
-    const total = stats[0].salairetotal
+    var stats = await getStatisticsService()
 
-    res.json({max, min, total})
-
+    res.json(stats)
 }
 
     //Recuperer dernier ID et faire +1 la partie qui est un chiffre
