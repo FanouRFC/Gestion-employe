@@ -1,0 +1,44 @@
+name: Pipeline CI/CD gestion employe
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  front-end-runner:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./Gestion employe/front"
+    steps:
+      - name: recup projet
+        uses: actions/checkout@v7
+      - name: config node
+        uses: actions/setup-node@v7
+      - name: installer package
+        run:  |
+          npm install
+      - name: build
+        run:  |
+          npm run build
+          
+  backend-end-runner:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./Gestion employe/back"
+    steps:
+      - name: recup projet
+        uses: actions/checkout@v7
+      - name: config node
+        uses: actions/setup-node@v7
+      - name: installer package
+        run:  |
+          npm install
+      - name: lancer test
+        run:  |
+          npm test
+        
+      
+    
